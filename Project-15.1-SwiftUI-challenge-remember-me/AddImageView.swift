@@ -6,10 +6,36 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct AddImageView: View {
+    
+    @State private var pickerImage: PhotosPickerItem?
+    @State private var selectedImage: Image?
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            
+            selectedImage?
+                .resizable()
+                .scaledToFit()
+            
+            PhotosPicker(
+                selection: $pickerImage,
+                matching: .images
+            ) {
+                Button("Add") {}
+                    .padding()
+                    .background(.gray.opacity(0.2))
+            }
+            
+            .onChange(of: pickerImage) {
+                Task {
+                    selectedImage = try await pickerImage?
+                        .loadTransferable(type: Image.self)
+                }
+            }
+        }
     }
 }
 
