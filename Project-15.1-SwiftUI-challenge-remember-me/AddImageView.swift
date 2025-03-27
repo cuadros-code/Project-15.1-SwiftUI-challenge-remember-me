@@ -13,26 +13,54 @@ struct AddImageView: View {
     @State private var pickerImage: PhotosPickerItem?
     @State private var selectedImage: Image?
     
+    @State private var name = ""
+    @State private var address = ""
+    
     var body: some View {
         NavigationStack {
-            PhotosPicker(
-                selection: $pickerImage,
-                matching: .images
-            ) {
-                if selectedImage != nil {
-                    selectedImage?
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 200, height: 200)
-                        .clipShape(.circle)
+            Form {
+                Section("Select a picture") {
+                    HStack {
+                        Spacer()
+                        PhotosPicker(
+                            selection: $pickerImage,
+                            matching: .images
+                        ) {
+                            if selectedImage != nil {
+                                selectedImage?
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 200, height: 200)
+                                    .clipShape(.circle)
+                                
+                            } else {
+                                Image(systemName: "photo")
+                                    .font(.title)
+                                    .foregroundStyle(.black)
+                                    .frame(width: 200, height: 200)
+                                    .background(.gray.opacity(0.2))
+                                    .clipShape(.circle)
+                            }
+                        }
+                        Spacer()
+                    }
+                }
+                
+                Section("Additional Information") {
+                    TextField("Name", text: $name)
+                    TextField("Address", text: $address)
+                }
+                
+                Section {
+                    Button {
                         
-                } else {
-                    Image(systemName: "photo")
-                        .font(.title)
-                        .foregroundStyle(.black)
-                        .frame(width: 200, height: 200)
-                        .background(.gray.opacity(0.2))
-                        .clipShape(.circle)
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Save")
+                            Spacer()
+                        }
+                    }
                 }
             }
             
