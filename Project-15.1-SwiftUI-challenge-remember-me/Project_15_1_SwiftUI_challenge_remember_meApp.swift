@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct Project_15_1_SwiftUI_challenge_remember_meApp: App {
@@ -13,5 +14,6 @@ struct Project_15_1_SwiftUI_challenge_remember_meApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: User.self)
     }
 }
