@@ -15,18 +15,25 @@ struct AddImageView: View {
     
     var body: some View {
         NavigationStack {
-            
-            selectedImage?
-                .resizable()
-                .scaledToFit()
-            
             PhotosPicker(
                 selection: $pickerImage,
                 matching: .images
             ) {
-                Button("Add") {}
-                    .padding()
-                    .background(.gray.opacity(0.2))
+                if selectedImage != nil {
+                    selectedImage?
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 200, height: 200)
+                        .clipShape(.circle)
+                        
+                } else {
+                    Image(systemName: "photo")
+                        .font(.title)
+                        .foregroundStyle(.black)
+                        .frame(width: 200, height: 200)
+                        .background(.gray.opacity(0.2))
+                        .clipShape(.circle)
+                }
             }
             
             .onChange(of: pickerImage) {

@@ -23,8 +23,8 @@ struct ContentView: View {
             .navigationTitle("Users")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        
+                    NavigationLink {
+                        AddImageView()
                     } label: {
                         Image(systemName: "person.crop.circle.fill.badge.plus")
                     }
