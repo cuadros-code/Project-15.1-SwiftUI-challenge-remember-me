@@ -10,8 +10,11 @@ import PhotosUI
 
 struct AddImageView: View {
     
+    @Environment(\.modelContext) var modelContext
+    @Environment(\.dismiss) var dismiss
     @State private var pickerImage: PhotosPickerItem?
-    @State private var selectedImage: Image?
+    @State private var selectedImage: Data?
+    @State private var image: UIImage?
     
     @State private var name = ""
     @State private var address = ""
@@ -26,14 +29,14 @@ struct AddImageView: View {
                             selection: $pickerImage,
                             matching: .images
                         ) {
-                            if selectedImage != nil {
-                                selectedImage?
+                            if let selectedImage = selectedImage,
+                                let uiImage = UIImage(data: selectedImage) {
+                                Image(uiImage: uiImage)
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 200, height: 200)
                                     .clipShape(.circle)
-                                
-                            } else {
+                            }  else {
                                 Image(systemName: "photo")
                                     .font(.title)
                                     .foregroundStyle(.black)
@@ -66,11 +69,20 @@ struct AddImageView: View {
             
             .onChange(of: pickerImage) {
                 Task {
-                    selectedImage = try await pickerImage?
-                        .loadTransferable(type: Image.self)
+                    if let data = try await pickerImage?.loadTransferable(
+                        type: Data.self
+                    ) {
+                        selectedImage = data
+                    }
                 }
             }
         }
+    }
+    
+    func save() {
+        let user = User(name: name, photo: selectedImage!, address: address)
+        modelContext.insert(user)
+        dismiss()
     }
 }
 

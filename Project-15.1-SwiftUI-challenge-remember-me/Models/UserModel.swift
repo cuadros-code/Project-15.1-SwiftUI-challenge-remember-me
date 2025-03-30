@@ -13,7 +13,7 @@ class User: Comparable {
 
     var id = UUID()
     var name: String
-    var photo: Data
+    @Attribute(.externalStorage) var photo: Data
     var address: String
     
     init(id: UUID = UUID(), name: String, photo: Data, address: String) {
