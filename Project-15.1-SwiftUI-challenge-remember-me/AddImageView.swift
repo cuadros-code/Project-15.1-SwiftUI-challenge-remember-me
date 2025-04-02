@@ -11,7 +11,6 @@ import PhotosUI
 struct AddImageView: View {
     
     @Environment(\.modelContext) var modelContext
-    @Environment(\.dismiss) var dismiss
     @State private var pickerImage: PhotosPickerItem?
     @State private var selectedImage: Data?
     @State private var image: UIImage?
@@ -56,7 +55,7 @@ struct AddImageView: View {
                 
                 Section {
                     Button {
-                        
+                        save()
                     } label: {
                         HStack {
                             Spacer()
@@ -80,9 +79,10 @@ struct AddImageView: View {
     }
     
     func save() {
-        let user = User(name: name, photo: selectedImage!, address: address)
-        modelContext.insert(user)
-        dismiss()
+        if (selectedImage != nil) {
+            let user = User(name: name, photo: selectedImage!, address: address)
+            modelContext.insert(user)
+        }
     }
 }
 
