@@ -11,6 +11,8 @@ import PhotosUI
 struct AddImageView: View {
     
     @Environment(\.modelContext) var modelContext
+    @Environment(\.dismiss) var dismiss
+    
     @State private var pickerImage: PhotosPickerItem?
     @State private var selectedImage: Data?
     @State private var image: UIImage?
@@ -18,63 +20,67 @@ struct AddImageView: View {
     @State private var name = ""
     @State private var address = ""
     
+    var formValid: Bool {
+        return !name.isEmpty && !address.isEmpty && selectedImage != nil
+    }
+    
     var body: some View {
-        NavigationStack {
-            Form {
-                Section("Select a picture") {
-                    HStack {
-                        Spacer()
-                        PhotosPicker(
-                            selection: $pickerImage,
-                            matching: .images
-                        ) {
-                            if let selectedImage = selectedImage,
-                                let uiImage = UIImage(data: selectedImage) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 200, height: 200)
-                                    .clipShape(.circle)
-                            }  else {
-                                Image(systemName: "photo")
-                                    .font(.title)
-                                    .foregroundStyle(.black)
-                                    .frame(width: 200, height: 200)
-                                    .background(.gray.opacity(0.2))
-                                    .clipShape(.circle)
-                            }
-                        }
-                        Spacer()
-                    }
-                }
-                
-                Section("Additional Information") {
-                    TextField("Name", text: $name)
-                    TextField("Address", text: $address)
-                }
-                
-                Section {
-                    Button {
-                        save()
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("Save")
-                            Spacer()
+        Form {
+            Section("Select a picture") {
+                HStack {
+                    Spacer()
+                    PhotosPicker(
+                        selection: $pickerImage,
+                        matching: .images
+                    ) {
+                        if let selectedImage = selectedImage,
+                           let uiImage = UIImage(data: selectedImage) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 200, height: 200)
+                                .clipShape(.circle)
+                        }  else {
+                            Image(systemName: "photo")
+                                .font(.title)
+                                .foregroundStyle(.black)
+                                .frame(width: 200, height: 200)
+                                .background(.gray.opacity(0.2))
+                                .clipShape(.circle)
                         }
                     }
+                    Spacer()
                 }
             }
             
-            .onChange(of: pickerImage) {
-                Task {
-                    if let data = try await pickerImage?.loadTransferable(
-                        type: Data.self
-                    ) {
-                        selectedImage = data
+            Section("Additional Information") {
+                TextField("Name", text: $name)
+                TextField("Address", text: $address)
+            }
+            
+            Section {
+                Button {
+                    save()
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("Save")
+                        Spacer()
                     }
                 }
+                .disabled(!formValid)
             }
+        }
+        
+        .onChange(of: pickerImage) {
+            Task {
+                if let data = try await pickerImage?.loadTransferable(
+                    type: Data.self
+                ) {
+                    selectedImage = data
+                }
+            }
+            
         }
     }
     
@@ -83,6 +89,7 @@ struct AddImageView: View {
             let user = User(name: name, photo: selectedImage!, address: address)
             modelContext.insert(user)
         }
+        dismiss()
     }
 }
 
