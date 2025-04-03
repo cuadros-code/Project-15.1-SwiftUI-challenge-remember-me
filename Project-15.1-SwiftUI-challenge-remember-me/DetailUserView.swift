@@ -13,8 +13,26 @@ struct DetailUserView: View {
     let user: User
     
     var body: some View {
-        
-        Text(user.name)
+        VStack(alignment: .leading) {
+            if let image = UIImage(data: user.photo) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding()
+                    
+            }
+            
+            VStack(alignment: .leading) {
+                Text("Name: " + user.name)
+                    .font(.headline)
+                Text("Address: " + user.address)
+                    .font(.headline)
+            }
+            .padding([.leading])
+            Spacer()
+     
+        }
     }
 }
 

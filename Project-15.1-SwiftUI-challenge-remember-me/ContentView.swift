@@ -41,7 +41,8 @@ struct ContentView: View {
             .navigationDestination(for: String.self) { _ in
                 AddImageView()
             }
-            .navigationDestination(for: User.self) { user in                DetailUserView(user: user)
+            .navigationDestination(for: User.self) { user in
+                DetailUserView(user: user)
             }
             
             
