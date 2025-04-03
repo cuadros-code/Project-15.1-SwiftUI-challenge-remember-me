@@ -11,6 +11,7 @@ import SwiftData
 
 struct ContentView: View {
     
+    @Environment(\.modelContext) var modelContext
     @Query var users: [User]
     @State private var path = NavigationPath()
     
@@ -18,23 +19,11 @@ struct ContentView: View {
         NavigationStack(path: $path) {
             List(users) { user in
                 NavigationLink(value: user) {
-                    HStack {
-                        if let uiImage = UIImage(data: user.photo) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 50, height: 50)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                    ListItemUserView(user: user)
+                    .swipeActions {
+                        Button("Delete", systemImage: "trash", role: .destructive) {
+                            modelContext.delete(user)
                         }
-                        
-                        VStack(alignment: .leading) {
-                            Text(user.name)
-                                .font(.headline)
-                            Text(user.address)
-                                .font(.subheadline)
-                                .foregroundStyle(.white.opacity(0.7))
-                        }
-                        .padding(.leading, 15)
                     }
                 }
             }
